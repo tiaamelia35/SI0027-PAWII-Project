@@ -18,7 +18,7 @@ let mahasiswa = [
 ];
 
 // TODO 1: GET /mahasiswa -> kirim seluruh data sebagai JSON
-app.get('/mahasiswa', (req, res) => {
+app.get('/mahasiswa', (req, res) => {     // /mahasiswa agar dicari di browser localhost:3000/mahasiswa
   // lengkapi di sini
   res.json(mahasiswa);
 });
