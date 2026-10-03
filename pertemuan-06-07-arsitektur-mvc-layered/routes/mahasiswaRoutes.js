@@ -17,3 +17,4 @@ router.get ('/:id', mahasiswaController.getById);
 router.post ('/', mahasiswaController.create);
 
 module.exports = router;
+
