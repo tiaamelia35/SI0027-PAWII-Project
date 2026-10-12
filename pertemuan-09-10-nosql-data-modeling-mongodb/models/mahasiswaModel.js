@@ -12,11 +12,11 @@ const alamatSchema = new mongoose.Schema(
 );
 
 const mahasiswaSchema = new mongoose.Schema({
-  // TODO: tambahkan field nama (String, required)
-  // TODO: tambahkan field nim (String, required, unique)
-  // TODO: tambahkan field alamat bertipe alamatSchema (embedding)
-  // TODO: tambahkan field prodiId yang mereferensi model 'Prodi' (referencing)
-  createdAt: { type: Date, default: Date.now },
+  nama: {type: String, required: true},
+  nama: {type: String, required: true, unique: true},
+  alamat: {type: alamatSchema},
+  prodiId: {type: mongoose.Schema.Types.ObjectId, ref: "Prodi"},    //referencing
+  createdAt: {type: Date, default: Date.now},
 });
 
 module.exports = mongoose.model("Mahasiswa", mahasiswaSchema);
