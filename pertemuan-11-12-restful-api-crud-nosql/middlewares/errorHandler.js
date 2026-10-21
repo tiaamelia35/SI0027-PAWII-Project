@@ -13,6 +13,22 @@ function errorHandler(err, req, res, next) {
   // TODO: jika err.name === 'CastError' -> status 400, message "Format {err.path} tidak valid"
   // TODO: jika err.code === 11000 (duplicate key) -> status 400, message data unik sudah ada
   // TODO: kirim res.status(status).json({ message })
+if (err.name === "ValidationError") {
+    status = 400;
+  } else if (err.name === "CastError") {
+    status = 400;
+    message = `Format ${err.path} tidak valid`;
+  } else if (err.code === 11000) {
+    status = 400;
+    message = "Data dengan nilai unik tersebut sudah ada";
+  }
+
+  if (status === 500) {
+    console.error(err);
+    message = "Terjadi kesalahan pada server";
+  }
+
+  res.status(status).json({ message });
 }
 
 module.exports = errorHandler;

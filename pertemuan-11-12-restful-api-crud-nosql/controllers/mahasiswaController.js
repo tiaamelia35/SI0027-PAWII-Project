@@ -1,6 +1,6 @@
-// Mini Project - Pertemuan 11-12: Controller Mahasiswa
-// TODO 1: lengkapi getAll agar mendukung filtering, sorting, pagination, dan projection.
-// getById/create/update/remove sudah lengkap (dari Pertemuan 9-10).
+// Solusi Referensi - Pertemuan 11-12: Controller Mahasiswa
+// Menambahkan filtering, sorting, pagination, projection dari Pertemuan 9-10.
+// Error async diteruskan otomatis ke middleware error (lihat app.js -> require('express-async-errors')).
 
 const Mahasiswa = require("../models/mahasiswaModel");
 
@@ -8,32 +8,30 @@ const MAX_LIMIT = 100;
 
 // GET /mahasiswa?prodiId=...&sort=nama&page=1&limit=10&fields=nama,nim
 exports.getAll = async (req, res) => {
-  // TODO: bangun object filter - jika req.query.prodiId ada, tambahkan ke filter
   const filter = {};
-  if(req.query.prodiId){
-    filter.prodiId = req.query.prodiId
+  if (req.query.prodiId) {
+    filter.prodiId = req.query.prodiId;
   }
 
-  console.log(req.params);
+  const page = Math.max(parseInt(req.query.page) || 1, 1);
+  const limit = Math.min(parseInt(req.query.limit) || 10, MAX_LIMIT);
+  const sortField = req.query.sort || "createdAt";
+  const projection = req.query.fields ? req.query.fields.split(",").join(" ") : "";
 
-  try{
-    const data = await Mahasiswa.find(filter).populate('prodiId');
-    if(!data) throw {status: 404, message: "Tidak Ditemukan"};
-    res.json(data);
-  }catch(error){
-    res.status(500).json({message:"Error: " + error});
+  try {
+    const data = await Mahasiswa.find(filter)
+      .populate("prodiId")
+      .select(projection)
+      .sort({ [sortField]: 1 })
+      .skip((page - 1) * limit)
+    .limit(limit);
+
+  const total = await Mahasiswa.countDocuments(filter);
+
+    res.json({ data, page, limit, total });
+  } catch (error) {
+    res.status(500).json({ message: "Terjadi kesalahan pada server"});
   }
-
-
-  // TODO: ambil page dari req.query.page (default 1, minimal 1)
-  // TODO: ambil limit dari req.query.limit (default 10), batasi maksimum dengan MAX_LIMIT
-  // TODO: ambil sortField dari req.query.sort (default 'createdAt')
-  // TODO: ambil projection dari req.query.fields (ubah "nama,nim" menjadi "nama nim")
-
-  // TODO: panggil Mahasiswa.find(filter).populate('prodiId').select(projection)
-  //   .sort({ [sortField]: 1 }).skip((page - 1) * limit).limit(limit)
-  // TODO: hitung total dengan Mahasiswa.countDocuments(filter)
-  // TODO: kirim res.json({ data, page, limit, total })
 };
 
 exports.getById = async (req, res) => {
