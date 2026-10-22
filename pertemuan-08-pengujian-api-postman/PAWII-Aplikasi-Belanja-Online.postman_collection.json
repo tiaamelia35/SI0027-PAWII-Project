@@ -1,0 +1,209 @@
+
+{
+  "info": {
+    "name": "PAWII - Aplikasi Belanja Online API",
+    "description": "Automated testing seluruh endpoint project akhir Aplikasi Belanja Online.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET Cek Server",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response memiliki pesan', function () {",
+              "  pm.expect(pm.response.json()).to.have.property('pesan');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/"
+      }
+    },
+    {
+      "name": "GET Semua Produk",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response berupa array', function () {",
+              "  pm.expect(pm.response.json()).to.be.an('array');",
+              "});",
+              "pm.test('Struktur produk sesuai', function () {",
+              "  const data = pm.response.json();",
+              "  if (data.length > 0) {",
+              "    pm.expect(data[0]).to.have.property('id');",
+              "    pm.expect(data[0]).to.have.property('nama');",
+              "    pm.expect(data[0]).to.have.property('harga');",
+              "    pm.expect(data[0]).to.have.property('stok');",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/produk"
+      }
+    },
+    {
+      "name": "POST Tambah Produk",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response memiliki pesan dan data', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property('pesan');",
+              "  pm.expect(jsonData).to.have.property('data');",
+              "});",
+              "pm.test('Data produk memiliki struktur yang sesuai', function () {",
+              "  const data = pm.response.json().data;",
+              "  pm.expect(data).to.have.property('id');",
+              "  pm.expect(data).to.have.property('nama', 'Buku Tulis');",
+              "  pm.expect(data).to.have.property('harga', 12000);",
+              "  pm.expect(data).to.have.property('stok', 25);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "if (jsonData.data && jsonData.data.id !== undefined) {",
+              "  pm.environment.set('produkId', jsonData.data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nama\": \"Buku Tulis\",\n  \"harga\": 12000,\n  \"stok\": 25\n}"
+        },
+        "url": "{{base_url}}/produk"
+      }
+    },
+    {
+      "name": "GET Satu Produk",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Data memiliki properti yang sesuai', function () {",
+              "  const data = pm.response.json();",
+              "  pm.expect(data).to.have.property('id');",
+              "  pm.expect(data).to.have.property('nama');",
+              "  pm.expect(data).to.have.property('harga');",
+              "  pm.expect(data).to.have.property('stok');",
+              "});",
+              "pm.test('ID sesuai dengan produk yang dibuat', function () {",
+              "  pm.expect(String(pm.response.json().id)).to.eql(String(pm.environment.get('produkId')));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/produk/{{produkId}}"
+      }
+    },
+    {
+      "name": "PUT Update Produk",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response memiliki pesan dan data', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property('pesan');",
+              "  pm.expect(jsonData).to.have.property('data');",
+              "});",
+              "pm.test('Produk berhasil diperbarui', function () {",
+              "  const data = pm.response.json().data;",
+              "  pm.expect(data.nama).to.eql('Buku Tulis Premium');",
+              "  pm.expect(data.harga).to.eql(15000);",
+              "  pm.expect(data.stok).to.eql(30);",
+              "  pm.expect(String(data.id)).to.eql(String(pm.environment.get('produkId')));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nama\": \"Buku Tulis Premium\",\n  \"harga\": 15000,\n  \"stok\": 30\n}"
+        },
+        "url": "{{base_url}}/produk/{{produkId}}"
+      }
+    },
+    {
+      "name": "DELETE Hapus Produk",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code adalah 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response memiliki pesan dan data yang dihapus', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property('pesan');",
+              "  pm.expect(jsonData).to.have.property('data');",
+              "  pm.expect(String(jsonData.data.id)).to.eql(String(pm.environment.get('produkId')));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "{{base_url}}/produk/{{produkId}}"
+      }
+    }
+  ]
+}
