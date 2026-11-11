@@ -4,11 +4,12 @@
 import MahasiswaCard from "./MahasiswaCard";
 
 function MahasiswaList({ mahasiswa }) {
+  // TODO: jika mahasiswa.length === 0, kembalikan <p className="empty">Tidak ada mahasiswa yang cocok.</p>
   if(mahasiswa.length === 0) {
     return <p className="empty">Tidak ada mahasiswa yang cocok.</p>;
   }
 
-  // TODO: jika mahasiswa.length === 0, kembalikan <p className="empty">Tidak ada mahasiswa yang cocok.</p>
+  
   return (
     <div className="mahasiswa-list">
       {mahasiswa.map((m) => (
